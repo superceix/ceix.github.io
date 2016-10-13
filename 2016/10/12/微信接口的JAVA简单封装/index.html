@@ -1,0 +1,646 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="微信接口这块的东西不是弄起来不算特别难，封装好了基本都能复用，不过没做过微信开发的同学第一次整起来还是显得有些蛋疼的。
+正好最近有弄微信的项目，把里头基础接口方面代码的封装记录一下，主要是jssdk方面和微信接口授权方面的java代码。
+一、access_token和ticket
+微信里面有两个access_token，一个是网页授权的access_token，这个是独立的token，第二个是其他">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微信接口的JAVA简单封装">
+<meta property="og:url" content="http://ceix.me/2016/10/12/微信接口的JAVA简单封装/index.html">
+<meta property="og:site_name" content="ceix.me">
+<meta property="og:description" content="微信接口这块的东西不是弄起来不算特别难，封装好了基本都能复用，不过没做过微信开发的同学第一次整起来还是显得有些蛋疼的。
+正好最近有弄微信的项目，把里头基础接口方面代码的封装记录一下，主要是jssdk方面和微信接口授权方面的java代码。
+一、access_token和ticket
+微信里面有两个access_token，一个是网页授权的access_token，这个是独立的token，第二个是其他">
+<meta property="og:updated_time" content="2016-10-13T08:20:06.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="微信接口的JAVA简单封装">
+<meta name="twitter:description" content="微信接口这块的东西不是弄起来不算特别难，封装好了基本都能复用，不过没做过微信开发的同学第一次整起来还是显得有些蛋疼的。
+正好最近有弄微信的项目，把里头基础接口方面代码的封装记录一下，主要是jssdk方面和微信接口授权方面的java代码。
+一、access_token和ticket
+微信里面有两个access_token，一个是网页授权的access_token，这个是独立的token，第二个是其他">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://ceix.me/2016/10/12/微信接口的JAVA简单封装/"/>
+
+  <title> 微信接口的JAVA简单封装 | ceix.me </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?f49dbd802d7e5f97934a3ba5202d197a";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">ceix.me</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                微信接口的JAVA简单封装
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-10-12T10:44:23+08:00" content="2016-10-12">
+              2016-10-12
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/10/12/微信接口的JAVA简单封装/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/12/微信接口的JAVA简单封装/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>微信接口这块的东西不是弄起来不算特别难，封装好了基本都能复用，不过没做过微信开发的同学第一次整起来还是显得有些蛋疼的。</p>
+<p>正好最近有弄微信的项目，把里头基础接口方面代码的封装记录一下，主要是jssdk方面和微信接口授权方面的java代码。</p>
+<p>一、access_token和ticket</p>
+<p>微信里面有两个access_token，一个是网页授权的access_token，这个是独立的token，第二个是其他接口调用的时候需要使用。这两个token都是需要进行全局缓存然后7200秒更新一次的。这里先说第二个token。</p>
+<p>获取并缓存token和ticket的代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Map&lt;String,String&gt; <span class="title">GetWxAccess</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">long</span> timestamp = System.currentTimeMillis() / <span class="number">1000</span>;</div><div class="line">    String ACCESS_TOKEN = <span class="string">""</span>;</div><div class="line">    String ticket = <span class="string">""</span>;</div><div class="line">    WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();  </div><div class="line">    ServletContext sc = webApplicationContext.getServletContext();  </div><div class="line">    <span class="comment">//获取缓存</span></div><div class="line">    String at = <span class="string">""</span>;</div><div class="line">    <span class="keyword">if</span>(sc.getAttribute(<span class="string">"ACCESS_TOKEN"</span>)!=<span class="keyword">null</span>)&#123;</div><div class="line">        at = (String) sc.getAttribute(<span class="string">"ACCESS_TOKEN"</span>);</div><div class="line">    &#125;        </div><div class="line">    <span class="keyword">long</span> at_alive = <span class="number">0</span>;     </div><div class="line">    <span class="keyword">if</span>(sc.getAttribute(<span class="string">"AT_ALIVE"</span>)!=<span class="keyword">null</span>)&#123;</div><div class="line">        at_alive = (Long) sc.getAttribute(<span class="string">"AT_ALIVE"</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">boolean</span> time = (timestamp-at_alive)&lt;<span class="number">7000</span>;</div><div class="line">    </div><div class="line">    <span class="comment">//at有效</span></div><div class="line">    <span class="keyword">if</span>(at!=<span class="keyword">null</span>&amp;&amp;!<span class="string">""</span>.equals(at)&amp;&amp;time)&#123;</div><div class="line">        ACCESS_TOKEN = at;</div><div class="line">        ticket = (String) sc.getAttribute(<span class="string">"ticket"</span>);</div><div class="line">    &#125;<span class="keyword">else</span>&#123;</div><div class="line">        <span class="comment">//at无效</span></div><div class="line">        String ACCESS_TOKEN_RSP = HttpRequest.sendGet(<span class="string">"https://api.weixin.qq.com/cgi-bin/token"</span>, <span class="string">"grant_type=client_credential&amp;appid="</span>+appid+<span class="string">"&amp;secret="</span>+secret);</div><div class="line">        JSONObject jb3 = JSONObject.fromObject(ACCESS_TOKEN_RSP);</div><div class="line">        Map map3 = (Map)jb3;</div><div class="line">        ACCESS_TOKEN = (String) map3.get(<span class="string">"access_token"</span>);</div><div class="line"></div><div class="line">        String jsapi_ticket_RSP = HttpRequest.sendGet(<span class="string">"https://api.weixin.qq.com/cgi-bin/ticket/getticket"</span>, <span class="string">"access_token="</span>+ACCESS_TOKEN+<span class="string">"&amp;type=jsapi"</span>);</div><div class="line">        JSONObject jb4 = JSONObject.fromObject(jsapi_ticket_RSP);</div><div class="line">        Map map4 = (Map)jb4;</div><div class="line">        ticket = (String) map4.get(<span class="string">"ticket"</span>);</div><div class="line">        </div><div class="line">        sc.setAttribute(<span class="string">"ACCESS_TOKEN"</span>,ACCESS_TOKEN );</div><div class="line">        sc.setAttribute(<span class="string">"ticket"</span>,ticket );</div><div class="line">        sc.setAttribute(<span class="string">"AT_ALIVE"</span>, timestamp);</div><div class="line">    &#125;</div><div class="line">    Map&lt;String, String&gt; res =<span class="keyword">new</span> HashMap&lt;String, String&gt;();</div><div class="line">    res.put(<span class="string">"ACCESS_TOKEN"</span>, ACCESS_TOKEN);</div><div class="line">    res.put(<span class="string">"ticket"</span>, ticket);</div><div class="line">    <span class="keyword">return</span> res;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">GetAccessToken</span><span class="params">()</span></span>&#123;</div><div class="line">    Map&lt;String, String&gt; map = GetWxAccess();</div><div class="line">    <span class="keyword">return</span> map.get(<span class="string">"ACCESS_TOKEN"</span>);</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">GetTicket</span><span class="params">()</span></span>&#123;</div><div class="line">    Map&lt;String, String&gt; map = GetWxAccess();</div><div class="line">    <span class="keyword">return</span> map.get(<span class="string">"ticket"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>二、jssdk</p>
+<p>jssdk主要是后台计算signature然后在前端js中进行配置config。<br>我习惯前端使用ajax获取config如下：<br><a id="more"></a><br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">if</span>(<span class="built_in">window</span>.location.host.indexOf(<span class="string">"localhost"</span>)&gt;=<span class="number">0</span>) <span class="keyword">return</span>;</div><div class="line">    $.ajax(&#123;</div><div class="line">        url:<span class="string">"../wxAuth/getconfig"</span>,</div><div class="line">        method:<span class="string">"get"</span>,</div><div class="line">        data:&#123;url:<span class="built_in">window</span>.location.host+<span class="built_in">window</span>.location.pathname+<span class="built_in">window</span>.location.search&#125;,</div><div class="line">        success:<span class="function"><span class="keyword">function</span>(<span class="params">data</span>)</span>&#123;</div><div class="line">            <span class="keyword">var</span> wxconfig= <span class="keyword">new</span> WXConfig();</div><div class="line">            wxconfig.appId=data.appId;</div><div class="line">            wxconfig.timestamp=data.timestamp;</div><div class="line">            wxconfig.nonceStr=data.nonceStr;</div><div class="line">            wxconfig.signature=data.signature;</div><div class="line">            SetWXConfig(wxconfig);</div><div class="line">        &#125;</div><div class="line">    &#125;)</div><div class="line">&#125;)();</div><div class="line"></div><div class="line"><span class="keyword">var</span> WXConfig=<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">    <span class="keyword">this</span>.appId=<span class="literal">null</span>;</div><div class="line">    <span class="keyword">this</span>.timestamp=<span class="literal">null</span>;</div><div class="line">    <span class="keyword">this</span>.nonceStr=<span class="literal">null</span>;</div><div class="line">    <span class="keyword">this</span>.signature=<span class="literal">null</span>;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">var</span> SetWXConfig= <span class="function"><span class="keyword">function</span>(<span class="params">wxconfig</span>)</span>&#123;</div><div class="line">    wx.config(&#123;</div><div class="line">    debug: <span class="literal">false</span>,</div><div class="line">    appId: wxconfig.appId,</div><div class="line">    timestamp: wxconfig.timestamp,</div><div class="line">    nonceStr: wxconfig.nonceStr,</div><div class="line">    signature: wxconfig.signature,</div><div class="line">    jsApiList: [</div><div class="line">        <span class="string">'chooseImage'</span>,</div><div class="line">        <span class="string">'uploadImage'</span>,</div><div class="line">        <span class="string">'downloadImage'</span>,</div><div class="line">        <span class="string">'onMenuShareTimeline'</span>,</div><div class="line">        <span class="string">'onMenuShareAppMessage'</span>,</div><div class="line">        <span class="string">'onMenuShareQQ'</span>,</div><div class="line">        <span class="string">'onMenuShareWeibo'</span>,</div><div class="line">        <span class="string">'onMenuShareQZone'</span></div><div class="line">    ]</div><div class="line">    &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>页面加载时自动请求获取config，在success方法中配置wx.config。</p>
+<p>这样做个人觉得在通用性方面好一点，因为微信token只能全局缓存一个，所有如果公众号下面有多个项目，可以起一个单独的项目做这些事，其他项目只用在需要的时候去获取就ok了，从而避免token的冲突。</p>
+<p>对应的后台部分：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ResponseBody</span></div><div class="line"><span class="meta">@RequestMapping</span>(<span class="string">"getconfig"</span>)</div><div class="line"><span class="function"><span class="keyword">public</span> JSONObject <span class="title">GetConfig</span><span class="params">(String url)</span></span>&#123;</div><div class="line">    JSONObject json = <span class="keyword">new</span> JSONObject();</div><div class="line">    <span class="keyword">long</span> timestamp = System.currentTimeMillis() / <span class="number">1000</span>;</div><div class="line">    String noncestr = UUID.randomUUID().toString();</div><div class="line">    String signature = <span class="string">""</span>;</div><div class="line">    </div><div class="line">    String ACCESS_TOKEN = WXPushService.GetAccessToken();</div><div class="line">    String ticket = WXPushService.GetTicket();</div><div class="line">    </div><div class="line">    String str = <span class="string">"jsapi_ticket="</span>+ticket+<span class="string">"&amp;noncestr="</span>+noncestr+<span class="string">"&amp;timestamp="</span>+timestamp+<span class="string">"&amp;url=http://"</span>+url;</div><div class="line">    signature = SHA1.getSHA1(str);</div><div class="line">    </div><div class="line">    json.put(<span class="string">"appId"</span>, appid);</div><div class="line">    json.put(<span class="string">"timestamp"</span>, timestamp);</div><div class="line">    json.put(<span class="string">"nonceStr"</span>, noncestr);</div><div class="line">    json.put(<span class="string">"signature"</span>, signature);</div><div class="line">    <span class="keyword">return</span> json;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>三、网页授权</p>
+<p>网页授权部分东西不算很多，有一个特殊的access_token需要缓存，目前项目中我把网页授权部分放在了拦截器中，代码集成的不多，全写在一坨离了，逻辑也略微蛋疼，凑合着看</p>
+<p>the code:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//检查session</span></div><div class="line"><span class="keyword">if</span>(AuthService.checkLogin(request))&#123;</div><div class="line">    <span class="keyword">return</span> AuthService.checkAuth();<span class="comment">//检查内部的访问权限</span></div><div class="line">&#125;<span class="keyword">else</span> &#123;</div><div class="line">    String code = request.getParameter(<span class="string">"code"</span>);</div><div class="line">    String state = request.getParameter(<span class="string">"state"</span>);</div><div class="line">    <span class="keyword">if</span>(code!=<span class="keyword">null</span> &amp;&amp;!<span class="string">""</span>.equals(code))&#123;<span class="comment">//如果code不为空，表示当前已重定向获取了code，可以用code去换取openid</span></div><div class="line">        <span class="comment">//get open id</span></div><div class="line">        String s=HttpRequest.GetRequest(<span class="string">"https://api.weixin.qq.com/sns/oauth2/access\_token?appid="</span>+SystemProperties.appid+<span class="string">"&amp;secret="</span>+SystemProperties.secret+<span class="string">"&amp;code="</span>+code+<span class="string">"&amp;grant_type=authorization_code"</span>);</div><div class="line">        JSONObject jb = JSONObject.fromObject(s);</div><div class="line">        Map map = (Map)jb;</div><div class="line">        String token = (String) map.get(<span class="string">"access_token"</span>);</div><div class="line">        String openid = (String) map.get(<span class="string">"openid"</span>);</div><div class="line">        </div><div class="line">        SysUser user=service.GetUserByOpenId(openid);<span class="comment">//在数据库中查找用户</span></div><div class="line">        </div><div class="line">        <span class="keyword">if</span>(user!=<span class="keyword">null</span> &amp;&amp; user.getId()&gt;<span class="number">0</span>)&#123;</div><div class="line">            AuthService.SetSession(request, user);</div><div class="line">            <span class="keyword">return</span> AuthService.checkAuth();</div><div class="line">        &#125;<span class="keyword">else</span> &#123;<span class="comment">//用户不存在，表示是新用户，需要获取用户信息保存数据库</span></div><div class="line">            <span class="keyword">if</span>(state.equals(<span class="string">"full"</span>))&#123;<span class="comment">//如果是获取的full完整用户信息，表示是新用户</span></div><div class="line">                String s2 = HttpRequest.GetRequest(<span class="string">"https://api.weixin.qq.com/sns/userinfo?access_token="</span>+token+<span class="string">"&amp;openid="</span>+openid+<span class="string">"&amp;lang=zh_CN"</span>);</div><div class="line">                JSONObject jb2 = JSONObject.fromObject(s2);</div><div class="line">                Map map2 = (Map)jb2;</div><div class="line">                SysUser newUser = <span class="keyword">new</span> SysUser();</div><div class="line"></div><div class="line">                <span class="comment">///构造用户</span></div><div class="line">                <span class="comment">///....</span></div><div class="line">                <span class="comment">///....</span></div><div class="line">                <span class="comment">///</span></div><div class="line">                </div><div class="line">                userService.AddNewUser(newUser);</div><div class="line">                AuthService.SetSession(request, newUser);</div><div class="line">                <span class="keyword">return</span> AuthService.checkAuth();</div><div class="line">            &#125;<span class="keyword">else</span>&#123;<span class="comment">//如果是不是获取的full完整用户信息，则当前请求的是base接口，前面也没有在数据库中找到相应用户，则需要去请求full接口，获取完整用户信息</span></div><div class="line">                String query=request.getQueryString();</div><div class="line">                query= query.replaceAll(<span class="string">"(&amp;*)code=.*(?=&amp;)"</span>, <span class="string">""</span>);</div><div class="line">                query = query.replaceAll(<span class="string">"(&amp;*)state=.*(?=$)"</span>, <span class="string">""</span>);</div><div class="line">                <span class="keyword">if</span>(<span class="string">""</span>.equals(query.trim()))&#123;</div><div class="line">                    query=<span class="keyword">null</span>;</div><div class="line">                &#125;</div><div class="line">                String retrunUrl = request.getRequestURL()+(query==<span class="keyword">null</span>?<span class="string">""</span>:<span class="string">"?"</span>+query);</div><div class="line">                response.sendRedirect(<span class="string">"https://open.weixin.qq.com/connect/oauth2/authorize?appid="</span>+SystemProperties.appid+<span class="string">"&amp;redirect_uri="</span>+URLEncoder.encode(retrunUrl,<span class="string">"UTF-8"</span>)+<span class="string">"&amp;response_type=code&amp;scope=snsapi_userinfo&amp;state=full#wechat_redirect"</span>);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    </div><div class="line">    &#125;<span class="keyword">else</span> &#123;<span class="comment">//code为空，重定向微信authorize，获取code</span></div><div class="line">            <span class="comment">//1 redirect get code</span></div><div class="line">            String query=request.getQueryString();</div><div class="line">            String retrunUrl = request.getRequestURL()+(query==<span class="keyword">null</span>?<span class="string">""</span>:<span class="string">"?"</span>+query);</div><div class="line">            response.sendRedirect(<span class="string">"https://open.weixin.qq.com/connect/oauth2/authorize?appid="</span>+SystemProperties.appid+<span class="string">"&amp;redirect_uri="</span>+URLEncoder.encode(retrunUrl,<span class="string">"UTF-8"</span>)+<span class="string">"&amp;response_type=code&amp;scope=snsapi_base&amp;state=base#wechat_redirect"</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>具体可以查看 <a href="http://mp.weixin.qq.com/wiki/home/index.html" target="_blank" rel="external">微信公众平台</a> </p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag">#java</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/09/22/博客迁移至github/" rel="next" title="博客迁移至github">
+                <i class="fa fa-chevron-left"></i> 博客迁移至github
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/10/12/微信接口的JAVA简单封装/"
+           data-title="微信接口的JAVA简单封装" data-url="http://ceix.me/2016/10/12/微信接口的JAVA简单封装/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="谢超" />
+          <p class="site-author-name" itemprop="name">谢超</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hinpc.com/" title="海风网" target="_blank">海风网</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.jayxhj.com/" title="徐豪杰写字的地方" target="_blank">徐豪杰写字的地方</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">谢超</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"ceix"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

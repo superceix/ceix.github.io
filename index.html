@@ -245,7 +245,116 @@
             
               
                 
-                <a class="post-title-link" href="/2016/09/22/博客迁移/" itemprop="url">
+                <a class="post-title-link" href="/2016/10/12/微信接口的JAVA简单封装/" itemprop="url">
+                  微信接口的JAVA简单封装
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-10-12T10:44:23+08:00" content="2016-10-12">
+              2016-10-12
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/10/12/微信接口的JAVA简单封装/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/12/微信接口的JAVA简单封装/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>微信接口这块的东西不是弄起来不算特别难，封装好了基本都能复用，不过没做过微信开发的同学第一次整起来还是显得有些蛋疼的。</p>
+<p>正好最近有弄微信的项目，把里头基础接口方面代码的封装记录一下，主要是jssdk方面和微信接口授权方面的java代码。</p>
+<p>一、access_token和ticket</p>
+<p>微信里面有两个access_token，一个是网页授权的access_token，这个是独立的token，第二个是其他接口调用的时候需要使用。这两个token都是需要进行全局缓存然后7200秒更新一次的。这里先说第二个token。</p>
+<p>获取并缓存token和ticket的代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Map&lt;String,String&gt; <span class="title">GetWxAccess</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">long</span> timestamp = System.currentTimeMillis() / <span class="number">1000</span>;</div><div class="line">    String ACCESS_TOKEN = <span class="string">""</span>;</div><div class="line">    String ticket = <span class="string">""</span>;</div><div class="line">    WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();  </div><div class="line">    ServletContext sc = webApplicationContext.getServletContext();  </div><div class="line">    <span class="comment">//获取缓存</span></div><div class="line">    String at = <span class="string">""</span>;</div><div class="line">    <span class="keyword">if</span>(sc.getAttribute(<span class="string">"ACCESS_TOKEN"</span>)!=<span class="keyword">null</span>)&#123;</div><div class="line">        at = (String) sc.getAttribute(<span class="string">"ACCESS_TOKEN"</span>);</div><div class="line">    &#125;        </div><div class="line">    <span class="keyword">long</span> at_alive = <span class="number">0</span>;     </div><div class="line">    <span class="keyword">if</span>(sc.getAttribute(<span class="string">"AT_ALIVE"</span>)!=<span class="keyword">null</span>)&#123;</div><div class="line">        at_alive = (Long) sc.getAttribute(<span class="string">"AT_ALIVE"</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">boolean</span> time = (timestamp-at_alive)&lt;<span class="number">7000</span>;</div><div class="line">    </div><div class="line">    <span class="comment">//at有效</span></div><div class="line">    <span class="keyword">if</span>(at!=<span class="keyword">null</span>&amp;&amp;!<span class="string">""</span>.equals(at)&amp;&amp;time)&#123;</div><div class="line">        ACCESS_TOKEN = at;</div><div class="line">        ticket = (String) sc.getAttribute(<span class="string">"ticket"</span>);</div><div class="line">    &#125;<span class="keyword">else</span>&#123;</div><div class="line">        <span class="comment">//at无效</span></div><div class="line">        String ACCESS_TOKEN_RSP = HttpRequest.sendGet(<span class="string">"https://api.weixin.qq.com/cgi-bin/token"</span>, <span class="string">"grant_type=client_credential&amp;appid="</span>+appid+<span class="string">"&amp;secret="</span>+secret);</div><div class="line">        JSONObject jb3 = JSONObject.fromObject(ACCESS_TOKEN_RSP);</div><div class="line">        Map map3 = (Map)jb3;</div><div class="line">        ACCESS_TOKEN = (String) map3.get(<span class="string">"access_token"</span>);</div><div class="line"></div><div class="line">        String jsapi_ticket_RSP = HttpRequest.sendGet(<span class="string">"https://api.weixin.qq.com/cgi-bin/ticket/getticket"</span>, <span class="string">"access_token="</span>+ACCESS_TOKEN+<span class="string">"&amp;type=jsapi"</span>);</div><div class="line">        JSONObject jb4 = JSONObject.fromObject(jsapi_ticket_RSP);</div><div class="line">        Map map4 = (Map)jb4;</div><div class="line">        ticket = (String) map4.get(<span class="string">"ticket"</span>);</div><div class="line">        </div><div class="line">        sc.setAttribute(<span class="string">"ACCESS_TOKEN"</span>,ACCESS_TOKEN );</div><div class="line">        sc.setAttribute(<span class="string">"ticket"</span>,ticket );</div><div class="line">        sc.setAttribute(<span class="string">"AT_ALIVE"</span>, timestamp);</div><div class="line">    &#125;</div><div class="line">    Map&lt;String, String&gt; res =<span class="keyword">new</span> HashMap&lt;String, String&gt;();</div><div class="line">    res.put(<span class="string">"ACCESS_TOKEN"</span>, ACCESS_TOKEN);</div><div class="line">    res.put(<span class="string">"ticket"</span>, ticket);</div><div class="line">    <span class="keyword">return</span> res;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">GetAccessToken</span><span class="params">()</span></span>&#123;</div><div class="line">    Map&lt;String, String&gt; map = GetWxAccess();</div><div class="line">    <span class="keyword">return</span> map.get(<span class="string">"ACCESS_TOKEN"</span>);</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">GetTicket</span><span class="params">()</span></span>&#123;</div><div class="line">    Map&lt;String, String&gt; map = GetWxAccess();</div><div class="line">    <span class="keyword">return</span> map.get(<span class="string">"ticket"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>二、jssdk</p>
+<p>jssdk主要是后台计算signature然后在前端js中进行配置config。<br>我习惯前端使用ajax获取config如下：<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/10/12/微信接口的JAVA简单封装/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/09/22/博客迁移至github/" itemprop="url">
                   博客迁移至github
                 </a>
               
@@ -270,8 +379,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/09/22/博客迁移/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/22/博客迁移/" itemprop="commentsCount"></span>
+                <a href="/2016/09/22/博客迁移至github/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/22/博客迁移至github/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -301,7 +410,7 @@
 <p>说起来，写博客这种事情，对我这种语文从来及格线的人来说着实头疼。不过既然要开坑，还是希望能好好写点东西</p>
 <p>再说了，虽然文字糟糕了点，但是……</p>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2016/09/22/博客迁移/#more" rel="contents">
+            <a class="btn" href="/2016/09/22/博客迁移至github/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -372,13 +481,20 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">1</span>
+              <span class="site-state-item-count">2</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
 
           
 
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
           
 
         </nav>
