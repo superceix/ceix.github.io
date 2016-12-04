@@ -109,7 +109,7 @@ Get">
 <meta property="og:image" content="http://ceix.me/img/9.png">
 <meta property="og:image" content="http://ceix.me/img/11.png">
 <meta property="og:image" content="http://ceix.me/img/12.png">
-<meta property="og:updated_time" content="2016-12-04T09:03:57.856Z">
+<meta property="og:updated_time" content="2016-12-04T09:05:05.564Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ethereum开发笔记(一)：以太坊私链demo，实现第一笔交易">
 <meta name="twitter:description" content="最近要做一个区块链的项目，前面几周调研区块链相关的资料，也搭了各种区块链的框架做实验，以太坊作为比较成熟的开源项目，学习资料也相对多一些，所以项目框架初步选用go-ethereum。一切从零开始，开发也是个不断摸索的过程，所以开个新坑，记录一下ethereum开发学习的过程。
@@ -328,8 +328,8 @@ Get">
 <p>连接节点（经过测试，如果没有连接账户，交易执行不会报错，但是接收方没有拿到交易的以太币）</p>
 <p>首先使用admin获取当前节点信息：<br><img src="/img/3.png" alt="img"><br>其中，encode就是连接的地址，使用当前ip替换掉[::]，在另外一个节点中，使用admin.addPeer()连接节点(也可以使用static-nodes.json静态的添加连接节点，后面的参考文章中有给出方法)<br>连接成功以后，在admin中可以看到peers的信息，证明连接没有问题<br><img src="/img/4.png" alt="img"><br>在两个节点上都创建好账户，然后其中一个节点先挖一会矿（第一次会生成dag比较慢），这样有一个账户就会获得以太以便交易<br>初始余额：<br><img src="/img/5.png" alt="img"><br><img src="/img/6.png" alt="img"><br>执行交易<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var tx = &#123;&quot;from&quot;: &quot;0xfcbbac1e74a354eb1ba54b5dda562c7133dc7bf2&quot;, &quot;to&quot;: &quot;0xb633eb86f6e7b32a54d7adce4f3beb0ecd6911d5&quot;, &quot;gas&quot;: &quot;0x76c0&quot;,  &quot;gasPrice&quot;: &quot;0x9184e72a000&quot;,&quot;value&quot;: &quot;0x9184e72a&quot;,  &quot;data&quot;: &quot;0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675&quot;&#125;</div><div class="line">eth.sendTransaction(tx)</div></pre></td></tr></table></figure><br><img src="/img/7.png" alt="img"><br>发送交易后返回transactionhash，但是并不会马上确认，需要有矿工在进行挖矿，交易记录到block中以后，交易就执行成功。这时可以看到接收者账户中的金额变多了，第一笔交易完成。<br>不得不吐槽一下…挖矿真是完全在烧cpu…启动挖矿电脑完全卡死- -<br>查看输出日志可以看到交易被记录在了第35个block中<br><img src="/img/10.png" alt="img"><br>可以看到交易完成后第二个节点中的接收账户余额增加<br><img src="/img/8.png" alt="img"><br><img src="/img/9.png" alt="img"></p>
 <p>通过rpcapi，我们可以根据transactionhash获取到之前的交易信息（实际上，上述控制台中的操作，应该都可以通过rpcapi完成）：<br>rpcapi可以通过上面我们启动命令中的–rpcport “7999”这个端口号来访问，我们通过eth_getTransactionByHash这个接口得到交易信息<br><img src="/img/11.png" alt="img"><br><img src="/img/12.png" alt="img"><br>rpcapi参考<a href="https://github.com/ethereum/wiki/wiki/JSON-RPC" target="_blank" rel="external">https://github.com/ethereum/wiki/wiki/JSON-RPC</a></p>
-<p>至此就完成了demo的目标，待续………</p>
 <p>参考文章：<br><a href="http://blog.csdn.net/sportshark/article/details/51855007" target="_blank" rel="external">http://blog.csdn.net/sportshark/article/details/51855007</a><br><a href="https://souptacular.gitbooks.io/ethereum-tutorials-and-tips-by-hudson/content/private-chain.html" target="_blank" rel="external">https://souptacular.gitbooks.io/ethereum-tutorials-and-tips-by-hudson/content/private-chain.html</a></p>
+<p>待续………</p>
 
       
     </div>
