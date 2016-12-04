@@ -84,13 +84,40 @@
 
 
 
+<meta name="description" content="最近要做一个区块链的项目，前面几周调研区块链相关的资料，也搭了各种区块链的框架做实验，以太坊作为比较成熟的开源项目，学习资料也相对多一些，所以项目框架初步选用go-ethereum。一切从零开始，开发也是个不断摸索的过程，所以开个新坑，记录一下ethereum开发学习的过程。
+demo的主要目标
+
+初始化ethereum私链环境、实现多个节点之间交易的产生，挖矿记录交易，最后读取交易信息。
+Get">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ethereum开发笔记(一)：demo，实现第一笔交易">
+<meta property="og:title" content="ethereum开发笔记(一)：以太坊私链demo，实现第一笔交易">
 <meta property="og:url" content="http://ceix.me/2016/12/04/ethereum开发笔记(一)：demo，实现第一笔交易/index.html">
 <meta property="og:site_name" content="ceix.me">
-<meta property="og:updated_time" content="2016-12-04T04:33:59.000Z">
+<meta property="og:description" content="最近要做一个区块链的项目，前面几周调研区块链相关的资料，也搭了各种区块链的框架做实验，以太坊作为比较成熟的开源项目，学习资料也相对多一些，所以项目框架初步选用go-ethereum。一切从零开始，开发也是个不断摸索的过程，所以开个新坑，记录一下ethereum开发学习的过程。
+demo的主要目标
+
+初始化ethereum私链环境、实现多个节点之间交易的产生，挖矿记录交易，最后读取交易信息。
+Get">
+<meta property="og:image" content="http://ceix.me/img/1.png">
+<meta property="og:image" content="http://ceix.me/img/3.png">
+<meta property="og:image" content="http://ceix.me/img/4.png">
+<meta property="og:image" content="http://ceix.me/img/5.png">
+<meta property="og:image" content="http://ceix.me/img/6.png">
+<meta property="og:image" content="http://ceix.me/img/7.png">
+<meta property="og:image" content="http://ceix.me/img/10.png">
+<meta property="og:image" content="http://ceix.me/img/8.png">
+<meta property="og:image" content="http://ceix.me/img/9.png">
+<meta property="og:image" content="http://ceix.me/img/11.png">
+<meta property="og:image" content="http://ceix.me/img/12.png">
+<meta property="og:updated_time" content="2016-12-04T09:01:08.732Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ethereum开发笔记(一)：demo，实现第一笔交易">
+<meta name="twitter:title" content="ethereum开发笔记(一)：以太坊私链demo，实现第一笔交易">
+<meta name="twitter:description" content="最近要做一个区块链的项目，前面几周调研区块链相关的资料，也搭了各种区块链的框架做实验，以太坊作为比较成熟的开源项目，学习资料也相对多一些，所以项目框架初步选用go-ethereum。一切从零开始，开发也是个不断摸索的过程，所以开个新坑，记录一下ethereum开发学习的过程。
+demo的主要目标
+
+初始化ethereum私链环境、实现多个节点之间交易的产生，挖矿记录交易，最后读取交易信息。
+Get">
+<meta name="twitter:image" content="http://ceix.me/img/1.png">
 
 
 
@@ -113,7 +140,7 @@
 
   <link rel="canonical" href="http://ceix.me/2016/12/04/ethereum开发笔记(一)：demo，实现第一笔交易/"/>
 
-  <title> ethereum开发笔记(一)：demo，实现第一笔交易 | ceix.me </title>
+  <title> ethereum开发笔记(一)：以太坊私链demo，实现第一笔交易 | ceix.me </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -243,7 +270,7 @@
             
             
               
-                ethereum开发笔记(一)：demo，实现第一笔交易
+                ethereum开发笔记(一)：以太坊私链demo，实现第一笔交易
               
             
           </h1>
@@ -290,7 +317,20 @@
       
 
       
-        
+        <p>最近要做一个区块链的项目，前面几周调研区块链相关的资料，也搭了各种区块链的框架做实验，以太坊作为比较成熟的开源项目，学习资料也相对多一些，所以项目框架初步选用go-ethereum。一切从零开始，开发也是个不断摸索的过程，所以开个新坑，记录一下ethereum开发学习的过程。</p>
+<font size="5">demo的主要目标</font>
+
+<p>初始化ethereum私链环境、实现多个节点之间交易的产生，挖矿记录交易，最后读取交易信息。</p>
+<p>Geth：geth相当于go-ethereum项目中运行区块链节点的命令行客户端，可以下载独立客户端或编译go-ethereum运行build/bin/geth启动节点。<br>创世块：创世块genesis在以太坊区块链中是第0个块，初始化整个区块链，在私链网络中，其他的参与者必须是同样的创世块才会和你在同一个链上。</p>
+<font size="5">初始化私链</font><br>以太坊私链环境中，可以认为是以创世块和networkid作标识，使用同样的创世块、newworkid相同，就相当于在同一个私链当中。<br>首先按照官方的文档搞定安装好客户端环境<br><br>准备创世块：<br><br>新建文件testgenesis.json，文件内容如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">    &quot;nonce&quot;: &quot;0x0000000000000042&quot;,</div><div class="line">    &quot;mixhash&quot;: &quot;0x0000000000000000000000000000000000000000000000000000000000000000&quot;,</div><div class="line">    &quot;difficulty&quot;: &quot;0x400&quot;,</div><div class="line">    &quot;alloc&quot;: &#123; &#125;,</div><div class="line">    &quot;coinbase&quot;: &quot;0x0000000000000000000000000000000000000000&quot;,</div><div class="line">    &quot;timestamp&quot;: &quot;0x00&quot;,</div><div class="line">    &quot;parentHash&quot;: &quot;0x0000000000000000000000000000000000000000000000000000000000000000&quot;,</div><div class="line">    &quot;extraData&quot;: &quot;Custem Ethereum Genesis Block&quot;,</div><div class="line">    &quot;gasLimit&quot;: &quot;0xffffffff&quot;</div><div class="line">&#125;</div></pre></td></tr></table></figure><br>创世块目前可能主要需要修改的就是difficulty，我机器性能一般，因此demo的难度设的比较低。<br><br>准备好创世块以后，就可以使用创世块来初始化区块链了，通过如下命令初始化：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">geth  --datadir chain init testgenesis.json</div></pre></td></tr></table></figure><br>这个命令使用创世块初始化了区块链的数据（–datadir后面的参数是生成的区块链目录，这个地址可以根据自己的目录修改）<br>打印如下信息表明初始化成功：<br><img src="/img/1.png" alt="img"><br>接着可以启动节点了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">geth --identity &quot;testetherum&quot;  --rpc --rpcport &quot;7999&quot; --rpcapi &quot;db,eth,net,web3&quot; --rpccorsdomain &quot;*&quot; --datadir chain --port &quot;30305&quot;  --networkid 555 --maxpeers 5 --minerthreads 1  console 2&gt;&gt;output</div></pre></td></tr></table></figure><br>执行上述命令，geth会启动节点，并启动控制台，将控制台的数据打印到output中，启动成功就可以看到“Welcome to the Geth JavaScript console”的提示，同时可以在控制台中输入相应的命令。<br>关于上面这条命令的参数说明：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">--identity &quot;testetherum&quot; ，标识名称，随意</div><div class="line">--rpc --rpcport &quot;7999&quot; --rpcapi &quot;db,eth,net,web3&quot;，启用rpc通信，通信端口为7999，rpcapi声明了可以连接rpc的客户端。</div><div class="line">--rpccorsdomain &quot;\*&quot;，这个应该是运行连接rpc的域名，\*应该就是允许任何人连接了</div><div class="line">--datadir chain，数据块的目录，我们这里当然是使用之前初始化好的数据目录</div><div class="line">--port &quot;30305&quot;，这个端口是监听网络请求的端口</div><div class="line">--networkid 555，当前的区块链的网络id，必须是同一个id才会在一个区块链内</div><div class="line">--maxpeers 5 --minerthreads 1，maxpeers指定了允许连接的最多节点数，minerthreads指定挖矿线程数</div></pre></td></tr></table></figure><br><br>启动完节点以后，其实已经等于一个只有一个节点的私链了。安装上述方法，再启动另外一个节点。<br>我本地是在windows上启用的虚拟机建了一个节点，虚拟机性能太差尝试挖矿半天没动静，因此我在windows上开启了另外一个节点挖矿，和虚拟机上的节点组成链，互相交易。<br><font size="5">发送一笔交易</font>
+
+<p>在控制台中，我们可以执行交易、挖矿等操作，项目命令参考<a href="https://github.com/ethereum/go-ethereum/wiki/Management-APIs" target="_blank" rel="external">https://github.com/ethereum/go-ethereum/wiki/Management-APIs</a><br>本次所用到的命令如下：<br>admin                                                              //查看当前信息<br>eth.accounts                                                    //查看当前账户<br>personal.newAccount(‘pwd’)                           //创建账户<br>userxxx=eth.accounts[n]                                 //把账户赋值给变量，方便操作<br>eth.getBalance(userxxx)                                  //查看账户的余额<br>personal.unlockAccount(userxxx,’pwd’)          //解锁账户，账户解锁以后才能交易<br>eth.sendTransaction({form:,to:,value:})            //发出交易，参数后面会讲<br>miner.start()  miner.stop()                               //开始挖矿，停止挖矿<br>admin.addPeer()                                             //连接节点</p>
+<p>连接节点（经过测试，如果没有连接账户，交易执行不会报错，但是接收方没有拿到交易的以太币）</p>
+<p>首先使用admin获取当前节点信息：<br><img src="/img/3.png" alt="img"><br>其中，encode就是连接的地址，使用当前ip替换掉[::]，在另外一个节点中，使用admin.addPeer()连接节点(也可以使用static-nodes.json静态的添加连接节点，后面的参考文章中有给出方法)<br>连接成功以后，在admin中可以看到peers的信息，证明连接没有问题<br><img src="/img/4.png" alt="img"><br>在两个节点上都创建好账户，然后其中一个节点先挖一会矿（第一次会生成dag比较慢），这样有一个账户就会获得以太以便交易<br>初始余额：<br><img src="/img/5.png" alt="img"><br><img src="/img/6.png" alt="img"><br>执行交易<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var tx = &#123;&quot;from&quot;: &quot;0xfcbbac1e74a354eb1ba54b5dda562c7133dc7bf2&quot;, &quot;to&quot;: &quot;0xb633eb86f6e7b32a54d7adce4f3beb0ecd6911d5&quot;, &quot;gas&quot;: &quot;0x76c0&quot;,  &quot;gasPrice&quot;: &quot;0x9184e72a000&quot;,&quot;value&quot;: &quot;0x9184e72a&quot;,  &quot;data&quot;: &quot;0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675&quot;&#125;</div><div class="line">eth.sendTransaction(tx)</div></pre></td></tr></table></figure><br><img src="/img/7.png" alt="img"><br>发送交易后返回transactionhash，但是并不会马上确认，需要有矿工在进行挖矿，交易记录到block中以后，交易就执行成功。这时可以看到接收者账户中的金额变多了，第一笔交易完成。<br>不得不吐槽一下…挖矿真是完全在烧cpu…启动挖矿电脑完全卡死- -<br>查看输出日志可以看到交易被记录在了第35个block中<br><img src="/img/10.png" alt="img"><br>可以看到交易完成后第二个节点中的接收账户余额增加<br><img src="/img/8.png" alt="img"><br><img src="/img/9.png" alt="img"></p>
+<p>通过rpcapi，我们可以根据transactionhash获取到之前的交易信息（实际上，上述控制台中的操作，应该都可以通过rpcapi完成）：<br>rpcapi可以通过上面我们启动命令中的–rpcport “7999”这个端口号来访问，我们通过eth_getTransactionByHash这个接口得到交易信息<br><img src="/img/11.png" alt="img"><br><img src="/img/12.png" alt="img"><br>rpcapi参考<a href="https://github.com/ethereum/wiki/wiki/JSON-RPC" target="_blank" rel="external">https://github.com/ethereum/wiki/wiki/JSON-RPC</a></p>
+<p>至此就完成了demo的目标，待续………</p>
+<p>参考文章：<br><a href="http://blog.csdn.net/sportshark/article/details/51855007" target="_blank" rel="external">http://blog.csdn.net/sportshark/article/details/51855007</a><br><a href="https://souptacular.gitbooks.io/ethereum-tutorials-and-tips-by-hudson/content/private-chain.html" target="_blank" rel="external">https://souptacular.gitbooks.io/ethereum-tutorials-and-tips-by-hudson/content/private-chain.html</a><br><a id="more"></a></p>
+
       
     </div>
 
@@ -312,7 +352,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/区块链-ethereum-以太坊/" rel="tag">#区块链,ethereum,以太坊</a>
+            <a href="/tags/区块链/" rel="tag">#区块链</a>
+          
+            <a href="/tags/ethereum/" rel="tag">#ethereum</a>
+          
+            <a href="/tags/以太坊/" rel="tag">#以太坊</a>
           
         </div>
       
@@ -354,7 +398,7 @@
   <div class="comments" id="comments">
     
       <div class="ds-thread" data-thread-key="2016/12/04/ethereum开发笔记(一)：demo，实现第一笔交易/"
-           data-title="ethereum开发笔记(一)：demo，实现第一笔交易" data-url="http://ceix.me/2016/12/04/ethereum开发笔记(一)：demo，实现第一笔交易/">
+           data-title="ethereum开发笔记(一)：以太坊私链demo，实现第一笔交易" data-url="http://ceix.me/2016/12/04/ethereum开发笔记(一)：demo，实现第一笔交易/">
       </div>
     
   </div>
@@ -409,7 +453,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
