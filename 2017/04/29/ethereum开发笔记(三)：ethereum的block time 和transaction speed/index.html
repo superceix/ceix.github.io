@@ -84,22 +84,16 @@
 
 
 
-<meta name="description" content="以太坊账户是以太坊交易过程中的实体，账户中包含了账户余额、密钥等信息。
-关于以太坊账户的管理，如创建、解锁、更新等信息参考 https://github.com/ethereum/go-ethereum/wiki/Managing-Your-Accounts
-一个以太坊账户对应着一个钥匙文件，这个文件存储在以太坊数据keystore文件夹内。比较有意思的是，实际上这个钥匙文件的产生和使用是和具体的">
+<meta name="description" content="区块链技术以去中心化的存储和共识赢得了各行各业的青睐，在这种去中心化的架构上，所有的数据都以交易为载体，多个节点之间会进行数据的同步以达成共识。实际上，在目前已有的各种区块链框架中，区块产生速度和交易速度都是很重要的量化标准，同时恰恰也是因为数据共识的需要，区块和交易都需要网络上节点共同确认，也就限制了区块速度，从而交易速度也存在这样的瓶颈。例如Bitcoin目前的区块产生速度大约为每十分钟一个区">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ethereum开发笔记(二)：关于以太坊账户">
-<meta property="og:url" content="http://ceix.me/2017/02/21/ethereum开发笔记(二)：以太坊账户/index.html">
+<meta property="og:title" content="ethereum开发笔记(三)：ethereum的block time 和transaction speed">
+<meta property="og:url" content="http://ceix.me/2017/04/29/ethereum开发笔记(三)：ethereum的block time 和transaction speed/index.html">
 <meta property="og:site_name" content="ceix.me">
-<meta property="og:description" content="以太坊账户是以太坊交易过程中的实体，账户中包含了账户余额、密钥等信息。
-关于以太坊账户的管理，如创建、解锁、更新等信息参考 https://github.com/ethereum/go-ethereum/wiki/Managing-Your-Accounts
-一个以太坊账户对应着一个钥匙文件，这个文件存储在以太坊数据keystore文件夹内。比较有意思的是，实际上这个钥匙文件的产生和使用是和具体的">
-<meta property="og:updated_time" content="2017-02-22T08:36:01.650Z">
+<meta property="og:description" content="区块链技术以去中心化的存储和共识赢得了各行各业的青睐，在这种去中心化的架构上，所有的数据都以交易为载体，多个节点之间会进行数据的同步以达成共识。实际上，在目前已有的各种区块链框架中，区块产生速度和交易速度都是很重要的量化标准，同时恰恰也是因为数据共识的需要，区块和交易都需要网络上节点共同确认，也就限制了区块速度，从而交易速度也存在这样的瓶颈。例如Bitcoin目前的区块产生速度大约为每十分钟一个区">
+<meta property="og:updated_time" content="2017-05-05T07:58:20.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ethereum开发笔记(二)：关于以太坊账户">
-<meta name="twitter:description" content="以太坊账户是以太坊交易过程中的实体，账户中包含了账户余额、密钥等信息。
-关于以太坊账户的管理，如创建、解锁、更新等信息参考 https://github.com/ethereum/go-ethereum/wiki/Managing-Your-Accounts
-一个以太坊账户对应着一个钥匙文件，这个文件存储在以太坊数据keystore文件夹内。比较有意思的是，实际上这个钥匙文件的产生和使用是和具体的">
+<meta name="twitter:title" content="ethereum开发笔记(三)：ethereum的block time 和transaction speed">
+<meta name="twitter:description" content="区块链技术以去中心化的存储和共识赢得了各行各业的青睐，在这种去中心化的架构上，所有的数据都以交易为载体，多个节点之间会进行数据的同步以达成共识。实际上，在目前已有的各种区块链框架中，区块产生速度和交易速度都是很重要的量化标准，同时恰恰也是因为数据共识的需要，区块和交易都需要网络上节点共同确认，也就限制了区块速度，从而交易速度也存在这样的瓶颈。例如Bitcoin目前的区块产生速度大约为每十分钟一个区">
 
 
 
@@ -120,9 +114,9 @@
 
 
 
-  <link rel="canonical" href="http://ceix.me/2017/02/21/ethereum开发笔记(二)：以太坊账户/"/>
+  <link rel="canonical" href="http://ceix.me/2017/04/29/ethereum开发笔记(三)：ethereum的block time 和transaction speed/"/>
 
-  <title> ethereum开发笔记(二)：关于以太坊账户 | ceix.me </title>
+  <title> ethereum开发笔记(三)：ethereum的block time 和transaction speed | ceix.me </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -252,7 +246,7 @@
             
             
               
-                ethereum开发笔记(二)：关于以太坊账户
+                ethereum开发笔记(三)：ethereum的block time 和transaction speed
               
             
           </h1>
@@ -264,8 +258,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-02-21T09:47:23+08:00" content="2017-02-21">
-              2017-02-21
+            <time itemprop="dateCreated" datetime="2017-04-29T16:39:16+08:00" content="2017-04-29">
+              2017-04-29
             </time>
           </span>
 
@@ -275,8 +269,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2017/02/21/ethereum开发笔记(二)：以太坊账户/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/02/21/ethereum开发笔记(二)：以太坊账户/" itemprop="commentsCount"></span>
+                <a href="/2017/04/29/ethereum开发笔记(三)：ethereum的block time 和transaction speed/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/04/29/ethereum开发笔记(三)：ethereum的block time 和transaction speed/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -286,7 +280,7 @@
 
           
           
-             <span id="/2017/02/21/ethereum开发笔记(二)：以太坊账户/" class="leancloud_visitors" data-flag-title="ethereum开发笔记(二)：关于以太坊账户">
+             <span id="/2017/04/29/ethereum开发笔记(三)：ethereum的block time 和transaction speed/" class="leancloud_visitors" data-flag-title="ethereum开发笔记(三)：ethereum的block time 和transaction speed">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -308,12 +302,16 @@
       
 
       
-        <p>以太坊账户是以太坊交易过程中的实体，账户中包含了账户余额、密钥等信息。</p>
-<p>关于以太坊账户的管理，如创建、解锁、更新等信息参考 <a href="https://github.com/ethereum/go-ethereum/wiki/Managing-Your-Accounts" target="_blank" rel="external">https://github.com/ethereum/go-ethereum/wiki/Managing-Your-Accounts</a></p>
-<p>一个以太坊账户对应着一个钥匙文件，这个文件存储在以太坊数据keystore文件夹内。比较有意思的是，实际上这个钥匙文件的产生和使用是和具体的以太坊私链或公链节点没有直接联系的，例如，我们生成一个账户时，可能用到有如下几种方式：<br><a id="more"></a><br>1、可以在启动一个以太坊节点后的控制台内使用personal的方法创建<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">personal.newAccount()</div></pre></td></tr></table></figure><br>2、在启用节点的rpc接口以后通过rpc接口的personal_newAccount接口创建<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&#123;&quot;method&quot;: &quot;personal_newAccount&quot;, &quot;params&quot;: [string]&#125;</div></pre></td></tr></table></figure><br>3、直接在命令行中使用geth程序创建<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">geth account new</div></pre></td></tr></table></figure><br>4、其他如以太坊钱包、web3j等应用创建</p>
-<p>上述方法中，第四种方法我理解中应该属于是上层应用对前三种方法的封装，而前三种方法中，1和2两种方法是需要启动一个以太坊链的一个节点后才能使用，但是第三种方式，实际上任何一台机器、任何人都可以创建这么一个以太坊账户，因此，以太坊账户其实是和具体的链、节点是没有关系的，一个账户以钥匙文件的形式存在，不属于任何一个节点，也可以属于任何一个节点。</p>
-<p>如上所述，一个节点或者说一个人持有一个账户，实际上是对一个账户钥匙文件的持有，大家可以尝试和一个不存在的账户进行交易，以太坊是可以交易成功的。某一个链内正常有余额的账户，如果把这个账户的钥匙文件复制到另外一个链中，有趣的是，我们也可以用原来的密钥解锁并使用这个账户，只不过账户的余额是0而已。</p>
-<p>所以账户的余额这些信息，是存储在各个区块链节点的数据文件中的，而账户的密钥地址等信息是存在账户的钥匙文件中的。因此，如果我们做一些需要自动管理账户自动交易的应用时，实际上可能更多的是对这些钥匙文件的管理。</p>
+        <p>区块链技术以去中心化的存储和共识赢得了各行各业的青睐，在这种去中心化的架构上，所有的数据都以交易为载体，多个节点之间会进行数据的同步以达成共识。实际上，在目前已有的各种区块链框架中，区块产生速度和交易速度都是很重要的量化标准，同时恰恰也是因为数据共识的需要，区块和交易都需要网络上节点共同确认，也就限制了区块速度，从而交易速度也存在这样的瓶颈。例如Bitcoin目前的区块产生速度大约为每十分钟一个区块，而一个区块的大小被限制为1M，交易速度和数据写入速度也就被限制在这十分钟和1M之内。</p>
+<p>ethereum目前的区块产生速度在稳定后大约为每12秒产生一个区块，相比Bitcoin的十分钟一个区块，ethereum的block time已经有很大的提升。所以，ethereum的block time是怎样的机制，为什么ethereum可以达到12s的block time？</p>
+<a id="more"></a>
+<p>在pow共识机制下，区块链中的各个节点通过大量计算得到目标hash，如果想要提升区块产生速度，就必然需要降低pow的计算难度，而这就可能带来的问题是，有很大可能会发生多个节点同时计算出下一个区块的情况，从而会产生多个区块链分支，Bitcoin只会选择一条最长的链作为其信任的区块链而丢弃其他较短的链，因此Bitcoin将自身的block time现在到10分钟左右尽量避免这样的情况产生。</p>
+<p>与Bitcoin不同的是( <a href="https://blog.ethereum.org/2014/07/11/toward-a-12-second-block-time/" target="_blank" rel="external">https://blog.ethereum.org/2014/07/11/toward-a-12-second-block-time/</a> )，ethereum在并没有直接丢弃那些没有进入主链的区块链，ethereum将其称为uncle block，uncle block也可能会被其他block引用而获得奖励（GHOST protocol规定，每个uncle block会被奖励7/8的block reward，而引用uncle block会奖励1/32的block reward），因此ethereum并不需要完全规避uncle block 的产生也就可以提高自身产生区块的速度。(Bitcoin十分钟左右的block time，应该是可以提升的，特别是在私有的网络环境中，节点数量有限的情况下，应该可以大幅提升block time)</p>
+<p>关于block time具体是如何在代码中设定的，目前找到的相关资料大概是说根据当前block 的difficulty值来控制产生新block 的时间的，具体的算法说的是根据本次的block time，如果超过20秒，则降低难度，如果低于10秒，这提升难度，最后稳定下来以后得到的平均block time在12秒左右。但是在实验环境中，私链上的difficulty一直在提升没有降低过，而即使difficulty变化很大，实验中的block time也没有非常明显的改变，所以上面说的block time的控制算法貌似并每一体现其作用。所以目前暂时还没弄清楚，具体原因可能需要后续研究pow的实现才能弄明白。</p>
+<p>不过每个block的size在源码中倒是定义的很清楚，在很难继续有效的提升block time的情况下，我们考虑提高每个block所存放的交易数。在ethereum中，使用genesis创世块初始化时，会指定blockchain的GasLimit，这个GasLimit起到的作用就是控制区块的大小。ethereum每笔交易根据数据量大小计算其所需要付的手续费——gas，正常一笔最简单的交易所需要的gas约为21000个，如果交易中需要写入一些额外的数据就需要付出更多的gas，比如实验需要写入约40字节的内容，需要的gas为90000左右。在创世块中定义的GasLimit最大被限制为0x2fefd8，也就是3141592（实验过在genesis中设置更多大GasLimit，最初的一些block的GasLimit确实可以超过0x2fefd8，但是随着挖矿的进行GasLimit迅速骤减至0x2fefd8），也就是说，如果一笔交易需要付90000gas，一个block大概能记录三十多笔交易，也就是每秒能执行约3笔这样的交易，显然如果希望进行较多数据的写入，这样的速度是无法满足需求的。</p>
+<p>显然，要提升transaction speed，要么继续降低block time，要么提高每个block中能记录的transaction数量。而目前12秒的block time提升空间并不是很大，就算继续降低几秒也很难有明显的改观，所以最好是试着考虑提升transaction数量，比如修改源码中最大GasLimit的定义，就能很大程度上增加每个block的写入的transaction数目，也就能很好的提示transaction speed。但是，既然我们都能想到这样的方式，为什么ethereum要限制GasLimit呢？单纯的提供GasLimit会有什么问题吗？</p>
+<p>实际上，ethereum限制GasLimit，就像Bitcoin现在block大小1Mb一样，因为节点间的共识需要同步数据，只有保证block足够轻巧才能在有限的block time内，在复杂的网络环境中完成共识。block过于臃肿无疑会导致block time变大，提高GasLimit也就显得没有意义了。</p>
+<p>总的来讲，block time和transaction speed在公网复杂的网络环境下，并不适合继续大幅度的提高性能，如果在私有网络的或联盟链环境中，保证网络环境和有限数量的记账节点情况下，可以考虑提高GasLimit以提升transaction speed。</p>
 
       
     </div>
@@ -349,17 +347,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/12/04/ethereum开发笔记(一)：demo，实现第一笔交易/" rel="next" title="ethereum开发笔记(一)：以太坊私链demo，实现第一笔交易">
-                <i class="fa fa-chevron-left"></i> ethereum开发笔记(一)：以太坊私链demo，实现第一笔交易
+              <a href="/2017/02/21/ethereum开发笔记(二)：以太坊账户/" rel="next" title="ethereum开发笔记(二)：关于以太坊账户">
+                <i class="fa fa-chevron-left"></i> ethereum开发笔记(二)：关于以太坊账户
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/04/29/ethereum开发笔记(三)：ethereum的block time 和transaction speed/" rel="prev" title="ethereum开发笔记(三)：ethereum的block time 和transaction speed">
-                ethereum开发笔记(三)：ethereum的block time 和transaction speed <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -385,8 +379,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2017/02/21/ethereum开发笔记(二)：以太坊账户/"
-           data-title="ethereum开发笔记(二)：关于以太坊账户" data-url="http://ceix.me/2017/02/21/ethereum开发笔记(二)：以太坊账户/">
+      <div class="ds-thread" data-thread-key="2017/04/29/ethereum开发笔记(三)：ethereum的block time 和transaction speed/"
+           data-title="ethereum开发笔记(三)：ethereum的block time 和transaction speed" data-url="http://ceix.me/2017/04/29/ethereum开发笔记(三)：ethereum的block time 和transaction speed/">
       </div>
     
   </div>
