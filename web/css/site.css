@@ -2,7 +2,7 @@
 /* CSS Document */
 /*公用样式*/
 body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,select,textarea,p,blockquote,table,tr,th,td{margin:0;padding: 0;}
-body{font-size: 14px;font-family:'Microsoft YaHei',serif;}
+body{font-size: 14px;font-family:'Microsoft YaHei',serif;background: #f8f8f8;}
 a{text-decoration:none;color: #666; -webkit-tap-highlight-color: transparent;-webkit-touch-callout: none;-webkit-user-select: none;}
 a:focus{ outline: none;}
 img{border:0 none; width:100%; vertical-align:middle;}
@@ -64,7 +64,7 @@ ul{list-style-type:none;}
 
 .end-clock{ background-color: #ff8965;padding: 6px 10px;color: #fff;font-size: 12px;}
 
-.row{padding: 0.7em 0; border-bottom: 1px #ccc solid;}
+.row{padding: 0.9em 0; border-bottom: 1px #ccc solid;margin-bottom: 2px;}
 .base-row{ padding-left: 1em;padding-right: 1em;color: #A2A2A2}
 .vertical-line{ border-right: 1px solid #ccc;display: inline-block;position: absolute;right: 0;top: 5%;height: 90%;}
 .avatar{ width: 2.4em;height: 2.4em;border-radius: 1.2em;border: #eee solid 1px;margin-right: 0.5em;}
@@ -83,8 +83,8 @@ ul{list-style-type:none;}
 .goods-inventory-block span{ flex: 1;display: inline-block;color: #A2A2A2;text-align: right;}
 .goods-delivery-block{ color: #336799;}
 
-.comment-block{border-bottom: 1px #ccc solid;}
-.comment-title{ padding: 0.7em 1em;border-bottom: #eee solid 1px;color: #A2A2A2; }
+.comment-block{border-bottom: 1px #ccc solid;margin-bottom: 2px;}
+.comment-title{ padding: 0.9em 1em;border-bottom: #eee solid 1px;color: #A2A2A2; }
 .comment-list{ list-style: none;}
 .comment-list li{display: flex; padding: 1em;border-bottom: #eee solid 1px;}
 
