@@ -63,8 +63,8 @@ ul{list-style-type:none;}
 .swiper-pagination-color .swiper-pagination-bullet-active{ background-color: #ff5622;border: 0; }
 
 .end-clock{ background-color: #ff8965;padding: 6px 10px;color: #fff;font-size: 12px;}
-
-.row{padding: 0.9em 0; border-bottom: 1px #ccc solid;margin-bottom: 2px;}
+.content>div{ background: #fff;}
+.row{padding: 0.9em 0; border-bottom: 1px #ccc solid;margin-bottom: 10px;}
 .base-row{ padding-left: 1em;padding-right: 1em;color: #A2A2A2}
 .vertical-line{ border-right: 1px solid #ccc;display: inline-block;position: absolute;right: 0;top: 5%;height: 90%;}
 .avatar{ width: 2.4em;height: 2.4em;border-radius: 1.2em;border: #eee solid 1px;margin-right: 0.5em;}
