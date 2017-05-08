@@ -64,8 +64,8 @@ ul{list-style-type:none;}
 
 .end-clock{ background-color: #ff8965;padding: 6px 10px;color: #fff;font-size: 12px;}
 .content>div{ background: #fff;}
-.row{padding: 0.9em 0; border-bottom: 1px #ccc solid;margin-bottom: 10px;}
-.base-row{ padding-left: 1em;padding-right: 1em;color: #A2A2A2}
+.row{padding: 0.9em 0; border-bottom: 1px #ccc solid;}
+.base-row{ padding-left: 1em;padding-right: 1em;color: #A2A2A2;margin-bottom: 6px;}
 .vertical-line{ border-right: 1px solid #ccc;display: inline-block;position: absolute;right: 0;top: 5%;height: 90%;}
 .avatar{ width: 2.4em;height: 2.4em;border-radius: 1.2em;border: #eee solid 1px;margin-right: 0.5em;}
 
@@ -83,7 +83,7 @@ ul{list-style-type:none;}
 .goods-inventory-block span{ flex: 1;display: inline-block;color: #A2A2A2;text-align: right;}
 .goods-delivery-block{ color: #336799;}
 
-.comment-block{border-bottom: 1px #ccc solid;margin-bottom: 2px;}
+.comment-block{border-bottom: 1px #ccc solid;margin-bottom: 6px;}
 .comment-title{ padding: 0.9em 1em;border-bottom: #eee solid 1px;color: #A2A2A2; }
 .comment-list{ list-style: none;}
 .comment-list li{display: flex; padding: 1em;border-bottom: #eee solid 1px;}
